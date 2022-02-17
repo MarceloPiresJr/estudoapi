@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -21,7 +22,7 @@ base_de_dados = [
 def get_todos_usuarios():
     return base_de_dados
 
-@app.get("/usuarios/{id_usuario}")
+@app.get("/usuarios/{id_usuario}", status_code=200)
 def get_usuario_usando_id(id_usuario):
     for usuario in base_de_dados:
         if(usuario.id == id_usuario):
@@ -29,7 +30,11 @@ def get_usuario_usando_id(id_usuario):
 
     return {"Status": 404, "Mensagem": "Não encontrou Usuario"}
 
-@app.post("/usuarios")
+@app.post("/usuarios", status_code=201)
 def insere_usuario(usuario: Usuario):
-    base_de_dados.append(usuario)
-    return usuario
+    for usuarios in base_de_dados:
+        if (usuarios.id != usuario.id and usuarios.email != usuario.email):
+            base_de_dados.append(usuario)
+            return usuario
+        else:
+            return 'usuario ja cadastrado no banco de dados'
