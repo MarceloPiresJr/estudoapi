@@ -6,7 +6,7 @@ app = FastAPI()
 
 @app.get("/")
 def raiz():
-    return {"ola": "Mundo"}
+    return {"service": "online"}
 
 class Usuario(BaseModel):
     id: int
@@ -22,15 +22,7 @@ base_de_dados = [
 def get_todos_usuarios():
     return base_de_dados
 
-@app.get("/usuarios/{id_usuario}", status_code=200)
-def get_usuario_usando_id(id_usuario):
-    for usuario in base_de_dados:
-        if(usuario.id == id_usuario):
-            return usuario
-
-    return {"Status": 404, "Mensagem": "Não encontrou Usuario"}
-
-@app.post("/usuarios", status_code=201)
+@app.post("/usuarios")
 def insere_usuario(usuario: Usuario):
     for usuarios in base_de_dados:
         if (usuarios.id != usuario.id and usuarios.email != usuario.email):
@@ -38,3 +30,17 @@ def insere_usuario(usuario: Usuario):
             return usuario
         else:
             return 'usuario ja cadastrado no banco de dados'
+
+@app.get("/usuarios/{id_usuario}")
+def get_usuario_usando_id(id_usuario:int):
+    for usuario in base_de_dados:
+        if(id_usuario == usuario.id):
+            return {"id": id_usuario, "email":usuario.email}
+    return {"Status": 404, "Mensagem": "Não encontrou Usuario"}
+
+@app.get("/usuarios/teste/")
+async def deleta_usuario(id: int):
+    for usuario in base_de_dados:
+        if(id == usuario.id):
+           return {"id": usuario}
+    return 'Id não existe no banco de dados'
